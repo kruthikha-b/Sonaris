@@ -258,3 +258,128 @@ def _save_preprocessed(normalized: np.ndarray, output_path: Path) -> None:
             f"Failed to write preprocessed image to: {output_path}. "
             "Check that the path is writable and the format is supported."
         )
+
+
+# ===========================================================================
+# Phase 2 Extensions
+# ===========================================================================
+
+# Import Phase 2 modules here (inside module scope to avoid circular imports
+# and keep Phase 1 import surface clean)
+from .enhance import enhance as _enhance  # noqa: E402
+
+
+def preprocess_image_full(
+    image: ImageInput,
+    output_path: Union[str, Path, None] = None,
+    denoise_h: float = 10.0,
+    denoise_template_win: int = 7,
+    denoise_search_win: int = 21,
+    clahe_clip_limit: float = 2.0,
+    clahe_tile_grid: tuple[int, int] = (8, 8),
+    enhance_amount: float = 1.0,
+    enhance_sigma: float = 1.0,
+) -> np.ndarray:
+    """
+    Run the full P3 Phase 1 + Phase 2 sonar preprocessing pipeline.
+
+    Extends preprocess_image() (Phase 1) by adding an unsharp masking
+    enhancement step between CLAHE normalization and the final float32
+    scaling. Phase 1's preprocess_image() function is NOT modified.
+
+    Pipeline flow (Phase 1 + Phase 2):
+        Input image (path or numpy array)
+            ↓
+        _load_as_grayscale()       [Phase 1]
+            ↓
+        denoise()                  [Phase 1 — NLM denoising]
+            ↓
+        normalize_uint8()          [Phase 1 — CLAHE, uint8 output]
+            ↓
+        enhance()                  [Phase 2 — unsharp masking, uint8]
+            ↓
+        min-max → float32 [0,1]   [Phase 2 — final scaling]
+            ↓
+        Output: float32 (H, W)
+
+    Args:
+        image:               Input sonar image. Path (str/Path) or numpy array.
+                             Accepts uint8 grayscale (H,W) or BGR (H,W,3).
+        output_path:         Optional. If provided, saves the preprocessed
+                             result as a uint8 PNG to this path.
+        denoise_h:           NLM filter strength (default 10.0).
+        denoise_template_win: NLM template window size (default 7).
+        denoise_search_win:  NLM search window size (default 21).
+        clahe_clip_limit:    CLAHE contrast limit (default 2.0).
+        clahe_tile_grid:     CLAHE tile grid size (default (8, 8)).
+        enhance_amount:      Unsharp mask strength (default 1.0).
+                             0.0 = no enhancement, 2.0 = strong sharpening.
+        enhance_sigma:       Gaussian sigma for unsharp mask (default 1.0).
+
+    Returns:
+        Fully preprocessed sonar image as float32 ndarray (H, W) in [0, 1].
+
+    Raises:
+        TypeError:         If image type is unsupported.
+        ValueError:        If image is empty, unreadable, or invalid shape.
+        FileNotFoundError: If a path is provided but file does not exist.
+        IOError:           If the image file cannot be decoded by OpenCV.
+
+    Example:
+        >>> import numpy as np
+        >>> from ml.preprocessing import preprocess_image_full
+        >>> img = np.random.randint(50, 200, (512, 512), dtype=np.uint8)
+        >>> result = preprocess_image_full(img)
+        >>> result.dtype
+        dtype('float32')
+        >>> 0.0 <= float(result.min()) and float(result.max()) <= 1.0
+        True
+    """
+    # -------------------------------------------------------------------
+    # Phase 1 steps (reuse existing internal functions)
+    # -------------------------------------------------------------------
+    raw = _load_as_grayscale(image)
+
+    denoised = denoise(
+        raw,
+        h=denoise_h,
+        template_win_size=denoise_template_win,
+        search_win_size=denoise_search_win,
+    )
+
+    # normalize_uint8 = CLAHE only, returns uint8 for Phase 2 enhancement
+    clahe_uint8 = normalize_uint8(
+        denoised,
+        clip_limit=clahe_clip_limit,
+        tile_grid_size=clahe_tile_grid,
+    )
+
+    # -------------------------------------------------------------------
+    # Phase 2: Enhancement (unsharp masking at uint8 stage)
+    # -------------------------------------------------------------------
+    enhanced = _enhance(
+        clahe_uint8,
+        amount=enhance_amount,
+        sigma=enhance_sigma,
+    )
+
+    # -------------------------------------------------------------------
+    # Phase 2: Final scaling to float32 [0, 1]
+    # (same min-max logic as normalize_float, applied to enhanced image)
+    # -------------------------------------------------------------------
+    arr = enhanced.astype(np.float32)
+    mn, mx = float(arr.min()), float(arr.max())
+
+    if mx - mn < 1e-6:
+        normalized = np.zeros_like(arr, dtype=np.float32)
+    else:
+        normalized = ((arr - mn) / (mx - mn)).astype(np.float32)
+
+    # -------------------------------------------------------------------
+    # Optional: save to disk
+    # -------------------------------------------------------------------
+    if output_path is not None:
+        _save_preprocessed(normalized, Path(output_path))
+
+    return normalized
+
