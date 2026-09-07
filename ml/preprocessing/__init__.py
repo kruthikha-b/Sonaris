@@ -28,6 +28,9 @@ from .pipeline import preprocess_image_full
 from .tiler import tile_image, tile_filename
 from .tile_annotations import transform_annotations, load_yolo_labels
 
+# Phase 4 (Configuration & Dataset Access)
+from .config import get_dataset_dir, get_output_dir, is_dataset_available
+
 __all__ = [
     # Phase 1
     "preprocess_image",
@@ -37,4 +40,8 @@ __all__ = [
     "tile_filename",
     "transform_annotations",
     "load_yolo_labels",
+    # Phase 4
+    "get_dataset_dir",
+    "get_output_dir",
+    "is_dataset_available",
 ]
