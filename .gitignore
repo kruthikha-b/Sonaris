@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+.venv/
+venv/
+ENV/
+
+# Model weights & Checkpoints (Do NOT commit model weights)
+*.pt
+*.pth
+*.onnx
+*.engine
+*.tflite
+models/**/*.pt
+models/**/*.pth
+models/**/*.onnx
+models/weights/*.pt
+yolo*.pt
+
+# Training runs & artifacts
+runs/
+*.cache
+
+# Working & local datasets
+datasets/p1_working/
+datasets/**/*.jpg
+datasets/**/*.png
+datasets/**/*.txt
+!datasets/.gitkeep
+
+# OS generated
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
