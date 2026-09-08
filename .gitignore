@@ -52,3 +52,24 @@ report.csv
 sonaris.db
 __pycache__/
 *.pyc
+
+# Database
+sonaris.db
+
+# Uploads
+uploads/
+
+# Generated reports
+report.pdf
+report.csv
+report.json
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environment
+venv/
+
+# Alembic cache
+alembic/__pycache__/

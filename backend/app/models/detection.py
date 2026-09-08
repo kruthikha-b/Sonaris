@@ -15,4 +15,18 @@ class Detection(Base):
 
     class_name = Column(String, nullable=False)
 
+    anomaly_score = Column(Float, default=0)
+
+    priority = Column(String, default="LOW")
+
     confidence = Column(Float, nullable=False)
+
+    status = Column(String, default="Pending")
+
+    review_notes = Column(String, nullable=True)
+
+    latitude = Column(Float, nullable=True)
+
+    longitude = Column(Float, nullable=True)
+
+    uncertainty = Column(Float, nullable=True)
