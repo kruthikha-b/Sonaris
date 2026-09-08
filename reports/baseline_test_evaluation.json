@@ -1,0 +1,47 @@
+{
+  "split": "test",
+  "model_path": "/Users/kruthikhareddy/Desktop/Sonaris/models/weights/best.pt",
+  "data_path": "/private/tmp/sonaris_p1_dataset/data.yaml",
+  "precision": 0.6816,
+  "recall": 0.6883,
+  "map50": 0.6717,
+  "map50_95": 0.5173,
+  "speed": {
+    "preprocess_ms": 0.3485297283320203,
+    "inference_ms": 127.07804464664757,
+    "loss_ms": 4.410333228103506e-05,
+    "postprocess_ms": 0.20282811831445238,
+    "total_latency_ms": 127.63,
+    "fps": 7.8
+  },
+  "per_class": {
+    "crab_pot": {
+      "class_id": 0,
+      "precision": 0.9434,
+      "recall": 0.9885,
+      "map50": 0.9835,
+      "map50_95": 0.758
+    },
+    "submarine_pipeline": {
+      "class_id": 1,
+      "precision": 0.4656,
+      "recall": 0.4355,
+      "map50": 0.4171,
+      "map50_95": 0.2285
+    },
+    "shipwreck": {
+      "class_id": 2,
+      "precision": 0.992,
+      "recall": 1.0,
+      "map50": 0.995,
+      "map50_95": 0.9614
+    },
+    "ghost_net": {
+      "class_id": 3,
+      "precision": 0.3253,
+      "recall": 0.3293,
+      "map50": 0.2913,
+      "map50_95": 0.1214
+    }
+  }
+}

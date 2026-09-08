@@ -1,0 +1,21 @@
+{
+  "timestamp": "2026-09-08 00:54:00",
+  "model": "yolo11n.pt",
+  "data": "/private/tmp/sonaris_p1_dataset/data.yaml",
+  "epochs_requested": 12,
+  "batch_size": 16,
+  "image_size": 640,
+  "device": "mps",
+  "seed": 42,
+  "training_duration_seconds": 2936.87,
+  "training_duration_formatted": "48.95 minutes (2936.9s)",
+  "run_directory": "/Users/kruthikhareddy/Desktop/Sonaris/runs/detect/models/baseline/yolo11n_baseline",
+  "best_weights_source": "/Users/kruthikhareddy/Desktop/Sonaris/runs/detect/models/baseline/yolo11n_baseline/weights/best.pt",
+  "best_weights_export": "/Users/kruthikhareddy/Desktop/Sonaris/models/weights/best.pt",
+  "best_val_metrics": {
+    "val_precision": 0.7546635946696458,
+    "val_recall": 0.7136994947291799,
+    "val_mAP50": 0.7249784984088572,
+    "val_mAP50_95": 0.5425214199496453
+  }
+}
