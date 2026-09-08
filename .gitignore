@@ -45,3 +45,10 @@ reports/*
 Thumbs.db
 .vscode/
 .idea/
+
+#
+report.json
+report.csv
+sonaris.db
+__pycache__/
+*.pyc
