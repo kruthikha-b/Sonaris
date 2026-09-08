@@ -1,16 +1,17 @@
 def predict(image_path: str):
     """
-    Mock AI prediction.
-    Replace later with P1 model.
+    Placeholder for P1 model.
+
+    Expected output format:
     """
 
-    return [
-        {
-            "class_name": "pipeline",
-            "confidence": 0.95
-        },
-        {
-            "class_name": "wreck",
-            "confidence": 0.88
-        }
-    ]
+    return {
+        "image_id": "sample",
+        "detections": [
+            {
+                "class": "pipeline",
+                "confidence": 0.95,
+                "bbox": [10, 20, 100, 120]
+            }
+        ]
+    }
