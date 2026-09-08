@@ -1,18 +1,23 @@
-CLASS_WEIGHTS = {
-    0: 0.0,
-    1: 0.8,
+DEFAULT_CLASS_WEIGHTS = {
+    0: 1.0,
+    1: 1.0,
     2: 1.0,
     3: 1.0,
-    4: 0.9
+    4: 1.0
 }
 
 
-def calculate_anomaly_score(detection):
-    confidence = detection["confidence"]
-    class_id = detection["class_id"]
+def calculate_anomaly_score(
+    detection,
+    class_weights=None
+):
+    weights = class_weights or DEFAULT_CLASS_WEIGHTS
 
-    class_weight = CLASS_WEIGHTS.get(class_id, 0.5)
+    confidence = float(detection["confidence"])
+    class_id = int(detection["class_id"])
+
+    class_weight = float(weights.get(class_id, 1.0))
 
     score = confidence * class_weight
 
-    return round(min(score, 1.0), 4)
+    return round(max(0.0, min(score, 1.0)), 4)
